@@ -2,6 +2,7 @@
 """
 API Cost Guardian - Cost Analyzer (v2)
 Uses sessions_list to calculate daily API costs
+Multi-provider support with fallback pricing
 """
 
 import json
@@ -11,6 +12,18 @@ from datetime import datetime, date, timedelta
 from typing import Dict, List
 from collections import defaultdict
 from pathlib import Path
+
+# Import provider pricing
+try:
+    from provider_pricing import calculate_cost, is_free_provider, get_model_pricing
+except ImportError:
+    # Fallback if module not found
+    def calculate_cost(provider, model, usage):
+        return 0.0
+    def is_free_provider(provider):
+        return False
+    def get_model_pricing(provider, model):
+        return None
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"
 
@@ -71,11 +84,18 @@ def analyze_session_costs(sessions: List[dict], target_date: date) -> Dict:
             cost_info = usage.get('cost', {})
             cost = cost_info.get('total', 0.0)
             
-            if cost > 0:
+            provider = msg.get('provider', 'unknown')
+            model = msg.get('model', 'unknown')
+            
+            # Fallback: calculate cost if not provided by OpenClaw
+            if cost == 0.0 and usage.get('totalTokens', 0) > 0:
+                calculated_cost = calculate_cost(provider, model, usage)
+                if calculated_cost > 0:
+                    cost = calculated_cost
+            
+            # Only include if there's actual cost or token usage
+            if cost > 0 or usage.get('totalTokens', 0) > 0:
                 total_cost += cost
-                
-                provider = msg.get('provider', 'unknown')
-                model = msg.get('model', 'unknown')
                 
                 provider_costs[provider] += cost
                 model_costs[model] += cost
@@ -91,7 +111,8 @@ def analyze_session_costs(sessions: List[dict], target_date: date) -> Dict:
                     'input': usage.get('input', 0),
                     'output': usage.get('output', 0),
                     'cache_read': usage.get('cacheRead', 0),
-                    'cache_write': usage.get('cacheWrite', 0)
+                    'cache_write': usage.get('cacheWrite', 0),
+                    'is_free': is_free_provider(provider)
                 })
     
     return {
@@ -159,29 +180,44 @@ def generate_report(analysis: Dict, config: dict) -> dict:
 
 
 def format_report(report: dict) -> str:
-    """Format report as human-readable text"""
+    """Format report as human-readable text with provider breakdown"""
     lines = []
     
     lines.append(f"📅 Date: {report['date']}")
     lines.append(f"⏰ Current Time: {report['current_time'][:19]}")
     lines.append("")
-    lines.append(f"💰 Current Cost: ${report['total_cost']:.2f}")
-    lines.append(f"📈 Projected Daily Cost: ${report['projected_daily_cost']:.2f}")
+    lines.append(f"💰 Current Cost: ${report['total_cost']:.4f}")
+    lines.append(f"📈 Projected Daily Cost: ${report['projected_daily_cost']:.4f}")
     lines.append(f"🎯 Daily Budget: ${report['daily_budget']:.2f}")
     lines.append(f"📊 Budget Used: {report['budget_used_percent']:.1f}%")
     lines.append("")
     
-    if report['provider_costs']:
-        lines.append("🔍 Cost by Provider:")
-        for provider, cost in sorted(report['provider_costs'].items(), key=lambda x: x[1], reverse=True):
-            lines.append(f"  • {provider}: ${cost:.2f}")
+    # Provider별 비용 (유료 Provider만)
+    paid_providers = {k: v for k, v in report['provider_costs'].items() if v > 0 and k.lower() != 'ollama'}
+    free_providers = {k: v for k, v in report['provider_costs'].items() if k.lower() == 'ollama'}
+    
+    if paid_providers:
+        lines.append("💳 Cost by Provider (Paid):")
+        for provider, cost in sorted(paid_providers.items(), key=lambda x: x[1], reverse=True):
+            lines.append(f"  • {provider.upper()}: ${cost:.4f}")
         lines.append("")
     
+    if free_providers:
+        lines.append("🆓 Free Providers:")
+        for provider in free_providers:
+            lines.append(f"  • {provider.upper()}: Local model (no cost)")
+        lines.append("")
+    
+    # 모델별 TOP 5
     if report['model_costs']:
-        lines.append("🤖 Cost by Model:")
-        for model, cost in sorted(report['model_costs'].items(), key=lambda x: x[1], reverse=True):
+        lines.append("🤖 Top Models by Cost:")
+        top_models = sorted(report['model_costs'].items(), key=lambda x: x[1], reverse=True)[:5]
+        for i, (model, cost) in enumerate(top_models, 1):
             model_short = model.split('/')[-1] if '/' in model else model
-            lines.append(f"  • {model_short}: ${cost:.2f}")
+            if cost > 0:
+                lines.append(f"  {i}. {model_short}: ${cost:.4f}")
+            else:
+                lines.append(f"  {i}. {model_short}: Free")
         lines.append("")
     
     if report['alert_level']:

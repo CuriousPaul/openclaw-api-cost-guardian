@@ -2,7 +2,7 @@
 
 **실시간 API 비용 모니터링 & 알림 시스템**
 
-OpenClaw에서 사용하는 모든 API (Anthropic Claude, OpenAI 등)의 비용을 실시간으로 추적하고, 임계치 초과 시 자동으로 알림을 보내는 스킬입니다.
+OpenClaw에서 사용하는 **모든 주요 AI Provider** (Anthropic Claude, OpenAI GPT, Google Gemini, ZAI GLM, Ollama)의 비용을 실시간으로 추적하고, 임계치 초과 시 자동으로 알림을 보내는 스킬입니다.
 
 ---
 
@@ -30,6 +30,35 @@ OpenClaw에서 사용하는 모든 API (Anthropic Claude, OpenAI 등)의 비용�
 - 실시간 비용 리포트
 - 임계치 초과 시 즉시 알림
 - 조치 가능한 제안 포함
+
+---
+
+## 🌐 **지원 Provider (Multi-Provider)**
+
+### ✅ **유료 Provider**
+- **Anthropic**: Claude (Opus, Sonnet, Haiku)
+- **OpenAI**: GPT-4o, GPT-4, GPT-3.5
+- **Google**: Gemini (Flash, Pro)
+- **ZAI**: GLM-5, GLM-4.7
+
+### 🆓 **무료 Provider**
+- **Ollama**: 모든 로컬 모델 (완전 무료)
+
+### 📊 **가격 추적 방식**
+1. **OpenClaw 제공 비용** (usage.cost.total) 우선 사용
+2. 누락 시 **자체 가격표** (`provider_pricing.py`)로 계산
+3. 캐시 토큰 (cache_read, cache_write)도 추적
+
+### 💰 **가격 예시 (2026-02)**
+
+**가장 저렴:**
+- Gemini 2.5 Flash: $0.15/M (input)
+- GPT-4o-mini: $0.15/M (input)
+- Ollama: **$0.00** (무료)
+
+**프리미엄:**
+- Claude Opus 4: $15/M (input)
+- GPT-4: $10/M (input)
 
 ---
 
@@ -234,12 +263,14 @@ API 비용 체크해줘 (오늘 기준)
 
 ## 📈 **향후 개선 계획**
 
-- [ ] 주간/월간 리포트
-- [ ] 비용 트렌드 그래프
-- [ ] 자동 비용 최적화 제안
+- [x] 주간/월간 리포트 ✅ (v1.1.0)
+- [x] 비용 트렌드 그래프 ✅ (v1.1.0 - ASCII charts)
+- [x] 모델별 비용 비교 ✅ (v1.1.0)
+- [x] CSV/JSON export ✅ (v1.1.0)
 - [ ] 이메일 알림 지원
 - [ ] Slack 통합
 - [ ] 웹 대시보드
+- [ ] 자동 비용 최적화 액션
 
 ---
 
@@ -256,5 +287,6 @@ MIT License
 ---
 
 **만든 사람:** Paulina (폴리나) 🌸  
-**버전:** 1.0.0  
-**최종 업데이트:** 2026-02-15
+**버전:** 1.1.0  
+**최종 업데이트:** 2026-02-15  
+**새로운 기능:** 주간/월간 리포트, 데이터 export, 모델 비교 분석

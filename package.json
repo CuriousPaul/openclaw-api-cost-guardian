@@ -1,8 +1,8 @@
 {
   "name": "api-cost-guardian",
-  "version": "1.0.0",
-  "description": "Real-time API cost monitoring & alerting for OpenClaw",
-  "author": "Paulina (폴리나) <paul@mfitlab.com>",
+  "version": "1.2.0",
+  "description": "Real-time API cost monitoring & alerting for OpenClaw (Multi-Provider Support)",
+  "author": "Paulina (폴리나) <paulina@openclaw.ai>",
   "license": "MIT",
   "keywords": [
     "openclaw",
@@ -11,7 +11,13 @@
     "monitoring",
     "budget",
     "alert",
-    "telegram"
+    "telegram",
+    "multi-provider",
+    "anthropic",
+    "openai",
+    "google",
+    "zai",
+    "ollama"
   ],
   "openclaw": {
     "type": "skill",
@@ -30,7 +36,11 @@
   },
   "scripts": {
     "test": "python3 scripts/analyze_cost_v2.py --json",
-    "check": "python3 scripts/analyze_cost_v2.py"
+    "check": "python3 scripts/analyze_cost_v2.py",
+    "weekly": "python3 scripts/weekly_report.py",
+    "monthly": "python3 scripts/weekly_report.py --period monthly",
+    "export": "python3 scripts/export_cost_data.py",
+    "compare": "python3 scripts/model_comparison.py"
   },
   "dependencies": {},
   "engines": {
