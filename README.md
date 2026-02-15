@@ -2,7 +2,7 @@
 
 **OpenClaw용 실시간 API 비용 모니터링 시스템**
 
-Claude API, OpenAI API 등 유료 API 사용량을 실시간으로 추적하고, 일일 예산 초과 위험을 사전에 경고합니다.
+Claude API, OpenAI API, Google Gemini, ZAI GLM 등 **다중 Provider**의 유료 API 사용량을 실시간으로 추적하고, 일일 예산 초과 위험을 사전에 경고합니다.
 
 ---
 
@@ -35,6 +35,37 @@ API 비용 체크해줘
 - 비용 높은 크론/세션 식별
 - 비용 절감 제안 자동 생성
 - 예상 절감 효과 계산
+
+---
+
+## 🌐 **지원 Provider (Multi-Provider Support)**
+
+### ✅ **완전 지원**
+| Provider | 모델 | 가격 (Input/Output) | 상태 |
+|----------|------|---------------------|------|
+| **Anthropic** | claude-opus-4-6 | $15/M / $75/M | ✅ 지원 |
+| | claude-sonnet-4-5 | $3/M / $15/M | ✅ 지원 |
+| | claude-sonnet-3-5 | $3/M / $15/M | ✅ 지원 |
+| | claude-haiku-3-5 | $0.80/M / $4/M | ✅ 지원 |
+| **OpenAI** | gpt-4o | $2.50/M / $10/M | ✅ 지원 |
+| | gpt-4o-mini | $0.15/M / $0.60/M | ✅ 지원 |
+| | gpt-4-turbo | $10/M / $30/M | ✅ 지원 |
+| | gpt-3.5-turbo | $0.50/M / $1.50/M | ✅ 지원 |
+| **Google** | gemini-2.5-flash | $0.15/M / $0.60/M | ✅ 지원 |
+| | gemini-1.5-pro | $1.25/M / $3.75/M | ✅ 지원 |
+| **ZAI** | glm-5 | ~$1/M / ~$3/M | ✅ 지원 |
+| | glm-4.7 | ~$0.80/M / ~$2.40/M | ✅ 지원 |
+| **Ollama** | *(모든 로컬 모델)* | **무료** | ✅ 지원 |
+
+### 🆓 **무료 Provider**
+- **Ollama**: 모든 로컬 모델 (GLM, Llama, Mistral 등) - **$0.00**
+
+### 📝 **참고**
+- 가격 정보는 `scripts/provider_pricing.py`에 저장
+- OpenClaw에서 제공하는 비용을 우선 사용, 누락 시 자체 계산
+- 캐시 토큰 (cache_read, cache_write) 비용도 추적
+
+---
 
 ### 🆕 **주간/월간 리포트**
 - 과거 7일 또는 30일 비용 추세 분석
