@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "thresholds": {
+    "warning": 3.0,
+    "urgent": 5.0,
+    "critical": 7.0
+  },
+  "notification": {
+    "channel": "telegram",
+    "enabled": true
+  },
+  "monitoring": {
+    "providers": ["anthropic", "openai"],
+    "check_interval_hours": [8, 12, 18, 23],
+    "timezone": "Asia/Seoul"
+  },
+  "cost_tracking": {
+    "session_logs_path": "/Users/nanayong/.openclaw/workspace",
+    "daily_budget": 10.0,
+    "monthly_budget": 200.0
+  },
+  "auto_actions": {
+    "critical_threshold_reached": {
+      "disable_expensive_crons": false,
+      "switch_to_free_models": false,
+      "notify_only": true
+    }
+  }
+}

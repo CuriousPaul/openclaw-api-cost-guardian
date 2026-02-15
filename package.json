@@ -1,0 +1,43 @@
+{
+  "name": "api-cost-guardian",
+  "version": "1.1.0",
+  "description": "Real-time API cost monitoring & alerting for OpenClaw",
+  "author": "Paulina (폴리나) <paulina@openclaw.ai>",
+  "license": "MIT",
+  "keywords": [
+    "openclaw",
+    "api",
+    "cost",
+    "monitoring",
+    "budget",
+    "alert",
+    "telegram"
+  ],
+  "openclaw": {
+    "type": "skill",
+    "category": "productivity",
+    "tags": ["monitoring", "finance", "automation"],
+    "compatible": ["openclaw@>=0.1.0"],
+    "verified": false
+  },
+  "homepage": "https://github.com/paulina/api-cost-guardian",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulina/api-cost-guardian.git"
+  },
+  "bugs": {
+    "url": "https://github.com/paulina/api-cost-guardian/issues"
+  },
+  "scripts": {
+    "test": "python3 scripts/analyze_cost_v2.py --json",
+    "check": "python3 scripts/analyze_cost_v2.py",
+    "weekly": "python3 scripts/weekly_report.py",
+    "monthly": "python3 scripts/weekly_report.py --period monthly",
+    "export": "python3 scripts/export_cost_data.py",
+    "compare": "python3 scripts/model_comparison.py"
+  },
+  "dependencies": {},
+  "engines": {
+    "python": ">=3.8"
+  }
+}
