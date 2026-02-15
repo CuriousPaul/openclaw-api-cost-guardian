@@ -2,7 +2,7 @@
   "name": "api-cost-guardian",
   "version": "1.0.0",
   "description": "Real-time API cost monitoring & alerting for OpenClaw",
-  "author": "Paulina (폴리나) <paulina@openclaw.ai>",
+  "author": "Paulina (폴리나) <paul@mfitlab.com>",
   "license": "MIT",
   "keywords": [
     "openclaw",
