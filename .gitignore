@@ -1,25 +1,8 @@
-# Node
-node_modules/
-npm-debug.log*
-
-# Python
+*.pyc
 __pycache__/
-*.py[cod]
-*.so
-.Python
-
-# Logs
 *.log
-
-# OS
+*.csv
+*.json.bak
 .DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
-
-# Private
+venv/
 .env
-.env.local
